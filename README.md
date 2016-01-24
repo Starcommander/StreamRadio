@@ -1,2 +1,3 @@
 # StreamRadio
-Play network-radio channels, and add your custom channels.
+Play network-radio channels on Android.
+Add your custom channels to list.
