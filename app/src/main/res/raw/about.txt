@@ -1,0 +1,20 @@
+This project is released under the
+GPLv3 General Public License!
+
+github.com/Starcommander/StreamRadio
+
+
+Author: Paul Kashofer (Austria).
+
+
+For more channels you can browse there:
+- www.listenlive.eu
+- dir.xiph.org
+
+Some Icons are used from openclipart.org:
+- bass-guitar-sandberg-california-tm-5-300px.png
+- half-note-300px.png
+- Retro-Dancing-Couple-Silhouette-300px.png
+- saxophone-300px.png
+- TheresaKnott-piano-300px.png
+- woofer-300px.png

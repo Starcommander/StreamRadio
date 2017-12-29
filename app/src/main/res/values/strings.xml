@@ -1,4 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">WebRadio</string>
+    <string name="predefined_channels">Predefined channels</string>
+    <string name="custom_channels">Custom channels</string>
+    <string name="channels">Channels</string>
+    <string name="settings">Settings</string>
+    <string name="about">About</string>
+    <string name="ok">OK</string>
+    <string name="play">Play</string>
+    <string name="stop">Stop</string>
+    <string name="save">Save</string>
+    <string name="channel_name">Channel name</string>
+    <string name="edit_list">Edit list</string>
+    <string name="edit_channel">Edit Channel</string>
+    <string name="remove_channel">Remove Channel</string>
+    <string name="add_channel">Add Channel</string>
 </resources>

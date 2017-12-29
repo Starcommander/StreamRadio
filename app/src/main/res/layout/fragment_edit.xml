@@ -1,0 +1,36 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical" >
+
+    <Spinner
+        android:id="@+id/channelIconSpinner"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" />
+
+    <EditText
+        android:id="@+id/channelName"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:inputType="text"
+        android:maxLines="1"
+        android:hint="@string/channel_name" />
+
+    <EditText
+        android:id="@+id/channelUrl"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:inputType="textUri"
+        android:maxLines="1"
+        android:text="http://" />
+
+    <Button
+        android:id="@+id/saveButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:text="@string/save" />
+
+</LinearLayout>
+
+

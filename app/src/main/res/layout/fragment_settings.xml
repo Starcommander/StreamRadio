@@ -9,28 +9,35 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:text="+ Add channel from List"
+            android:text="@string/edit_list"
+            android:id="@+id/editChannels" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:text="@string/edit_channel"
+            android:id="@+id/editChannel" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:text="@string/remove_channel"
+            android:id="@+id/rmChannel" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:text="@string/add_channel"
             android:id="@+id/addChannel" />
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:text="Edit List"
-            android:id="@+id/editChannels" />
-            
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:text="Restore List"
-            android:id="@+id/restoreChannels" />
-            
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:text="About"
+            android:text="@string/about"
             android:id="@+id/about" />
 
 </LinearLayout>

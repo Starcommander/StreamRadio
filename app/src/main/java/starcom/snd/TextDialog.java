@@ -1,7 +1,8 @@
 package starcom.snd;
 
 import starcom.debug.LoggingSystem;
-import android.app.DialogFragment;
+import starcom.snd.listener.DialogFragmentWithListener;
+import starcom.snd.util.Resources;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,8 +11,9 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 
-public class TextDialog extends DialogFragment implements OnClickListener
+public class TextDialog extends DialogFragmentWithListener implements OnClickListener
 {
+  static String aboutTxt;
   // Empty constructor required for DialogFragment
   public TextDialog() {}
   
@@ -22,20 +24,14 @@ public class TextDialog extends DialogFragment implements OnClickListener
     Button okButton = (Button) view.findViewById(R.id.okChannelsTextButton);
     EditText listText = (EditText) view.findViewById(R.id.channelsText);
     listText.setFocusable(false);
-    String aboutTxt = createAboutText();
+    if (aboutTxt==null)
+    {
+      aboutTxt = Resources.readTextRaw(this.getActivity(), R.raw.about);
+    }
     listText.setText(aboutTxt);
     okButton.setOnClickListener(this);
+    getDialog().setTitle(R.string.about);
     return view;
-  }
-
-  private String createAboutText()
-  {
-    StringBuilder sb = new StringBuilder();
-    sb.append("This software is written by\nPaul Kashofer from Austria.\n\n");
-    sb.append("The project is released under the\nGPLv3 General Public License!\n");
-    sb.append("github.com/Starcommander/StreamRadio\n\n\n");
-    sb.append("For more channels you can browse:\nwww.listenlive.eu\ndir.xiph.org/");
-    return sb.toString();
   }
 
   @Override

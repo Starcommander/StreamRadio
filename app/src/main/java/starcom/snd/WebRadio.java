@@ -2,6 +2,9 @@ package starcom.snd;
 
 import starcom.debug.LoggingSystem;
 import starcom.snd.WebStreamPlayer.State;
+import starcom.snd.array.ChannelList;
+import starcom.snd.array.SimpleArrayAdapter;
+import starcom.snd.listener.CallbackListener;
 import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -14,23 +17,26 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.ArrayAdapter;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.Spinner;
 import android.widget.LinearLayout;
 import android.os.Bundle;
 import android.widget.Toast;
 
-public class WebRadio extends Activity implements OnClickListener, StateListener
+import java.util.ArrayList;
+
+public class WebRadio extends Activity implements OnClickListener, StateListener, CallbackListener
 {
   private int NOTIFICATION = R.string.app_name;
-  final static String TXT_PLAY = "Play";
-  final static String TXT_STOP = "Stop";
   final static String TXT_LABEL = "WebStreamPlayer";
   final static String TXT_NOTIFICATION = "StreamPlayer";
-  static String lastChannel;
+  static WebRadioChannel lastPlayChannel;
+  static WebRadioChannel lastSelectedChannel;
   static NotificationManager mNM;
   TextView label;
   Button playButton;
+  boolean bPlayButton = false;
   Button setButton;
   Spinner choice;
   WebStreamPlayer streamPlayer;
@@ -41,69 +47,68 @@ public class WebRadio extends Activity implements OnClickListener, StateListener
   public void onCreate(Bundle savedInstanceState)
   {
     super.onCreate(savedInstanceState);
-    label = new TextView(this);
-    label.setText(TXT_LABEL);
-    label.setTextSize(20);
-    label.setGravity(android.view.Gravity.CENTER_HORIZONTAL);
-    playButton = new Button(this);
-    playButton.setText(TXT_PLAY);
+    setContentView(R.layout.activity_main);
+    ChannelList.init(this);
+    
+    playButton = (Button) findViewById(R.id.mainPlay);
     playButton.setOnClickListener(this);
-    setButton = new Button(this);
-    setButton.setBackground(getResources().getDrawable( R.drawable.ic_settings ));
+    label = (TextView) findViewById(R.id.mainText);
+    label.setText(TXT_LABEL);
+    setButton = (Button) findViewById(R.id.mainSettings);
     setButton.setOnClickListener(this);
-    setButton.setText(" ");
-
-    choice = new Spinner(this);
-    ArrayAdapter<WebRadioChannel> arrayAdapter = new ArrayAdapter<WebRadioChannel>(this,android.R.layout.simple_spinner_dropdown_item);
-    String channelsTxt = ChannelsDialog.readChannels(this);
-    if (channelsTxt==null)
-    {
-      ChannelsDialog.doWriteDefault(this);
-      channelsTxt = ChannelsDialog.readChannels(this);
-    }
-    ChannelsDialog.getChannelsFromString(channelsTxt, arrayAdapter, false);
+    choice = (Spinner) findViewById(R.id.mainSpinner);
+    
+    SimpleArrayAdapter arrayAdapter = new SimpleArrayAdapter(this.getApplicationContext());
     choice.setAdapter(arrayAdapter);
-    
-    ImageView space = new ImageView(this);
-    space.setImageResource(R.drawable.ic_headphones);
-    space.setImageLevel(96);
-    
-    LinearLayout rl = new LinearLayout(this);
-    rl.setOrientation(LinearLayout.HORIZONTAL);
-    rl.addView(setButton);
-    rl.setGravity(android.view.Gravity.RIGHT);
-
-    LinearLayout ll = new LinearLayout(this);
-    ll.setOrientation(LinearLayout.VERTICAL);
-    ll.setGravity(android.view.Gravity.CENTER);
-    ll.addView(rl);
-    ll.addView(space);
-    ll.addView(label);
-    ll.addView(choice);
-    ll.addView(playButton);
-    setContentView(ll);
+    choice.setOnItemSelectedListener(createSpinnerListener());
     
     streamPlayer = WebStreamPlayer.getInstance();
     streamPlayer.setStateListener(this);
-    if (streamPlayer.getState()!=State.Stopped)
-    {
-      playButton.setText(TXT_STOP);
-      label.setText(getChannelName());
-    }
+    stateChanged(streamPlayer.getState());
     
     TelephonyManager telephonyManager = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
     telephonyManager.listen(new CallStateListener(streamPlayer), PhoneStateListener.LISTEN_CALL_STATE);
   }
-
-  private String getChannelName()
+  
+  private OnItemSelectedListener createSpinnerListener()
   {
-    String newName = lastChannel.substring(3);
-    if (lastChannel.startsWith("[e]")) { return "[electro]" + newName; }
-    if (lastChannel.startsWith("[r]")) { return "[rock]" + newName; }
-    if (lastChannel.startsWith("[c]")) { return "[classic]" + newName; }
-    if (lastChannel.startsWith("[o]")) { return "[oldies]" + newName; }
-    if (lastChannel.startsWith("[u]")) { return "[unknown]" + newName; }
-    return lastChannel;
+    OnItemSelectedListener l = new OnItemSelectedListener()
+    {
+      @Override
+      public void onItemSelected(AdapterView<?> parent, View view, int pos, long id)
+      {
+        lastSelectedChannel = (WebRadioChannel) choice.getSelectedItem();
+      }
+
+      @Override
+      public void onNothingSelected(AdapterView<?> parent)
+      {
+      }
+    };
+    return l;
+  }
+
+  @Override
+  public void onResume()
+  {
+    super.onResume();
+    updateSpinner();
+  }
+  
+  public void onCallback()
+  {
+    updateSpinner();
+  }
+  
+  private void updateSpinner()
+  {
+    WebRadioChannel selChannel = lastSelectedChannel;
+    SimpleArrayAdapter adapter = (SimpleArrayAdapter) choice.getAdapter();
+    adapter.clear();
+    ArrayList<WebRadioChannel> selectedChannels = ChannelList.getInstance().createSelectedChannelList();
+    adapter.addAll(selectedChannels);
+    int idx = selectedChannels.indexOf(selChannel);
+    if (idx >= 0) { choice.setSelection(idx); }
   }
 
   @Override
@@ -111,10 +116,10 @@ public class WebRadio extends Activity implements OnClickListener, StateListener
   {
     if (v==setButton)
     {
-      SettingsDialog.showSettings(v, getFragmentManager(), "fragment_settings", SettingsDialog.class);
+      SettingsDialog.showSettings(v, getFragmentManager(), "fragment_settings", SettingsDialog.class, this, SettingsDialog.SettingsType.Main);
       return;
     }
-    if (playButton.getText().equals(TXT_PLAY))
+    if (bPlayButton)
     {
       try
       {
@@ -124,8 +129,8 @@ public class WebRadio extends Activity implements OnClickListener, StateListener
         }
         WebRadioChannel curChannel = (WebRadioChannel) choice.getSelectedItem();
         streamPlayer.play(curChannel.getUrl());
-        lastChannel = curChannel.toString();
-        label.setText(getChannelName());
+        lastPlayChannel = curChannel;
+        label.setText(lastPlayChannel.getName());
       }
       catch (Exception e)
       {
@@ -148,12 +153,14 @@ public class WebRadio extends Activity implements OnClickListener, StateListener
   {
     if (state == State.Playing)
     {
-      playButton.setText(TXT_STOP);
+      playButton.setText(R.string.stop);
+      bPlayButton = false;
       showNotification();
     }
     else if (state == State.Stopped)
     {
-      playButton.setText(TXT_PLAY);
+      playButton.setText(R.string.play);
+      bPlayButton = true;
       label.setText(TXT_LABEL);
       hideNotification();
     }
