@@ -1,4 +1,4 @@
-package starcom.snd;
+package starcom.snd.listener;
 
 import starcom.snd.WebStreamPlayer.State;
 

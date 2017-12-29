@@ -1,6 +1,8 @@
-package starcom.snd;
+package starcom.snd.dialog;
 
 import starcom.debug.LoggingSystem;
+import starcom.snd.R;
+import starcom.snd.WebRadioChannel;
 import starcom.snd.array.ChannelList;
 
 import java.util.ArrayList;

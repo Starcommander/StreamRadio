@@ -1,5 +1,6 @@
-package starcom.snd;
+package starcom.snd.listener;
 
+import starcom.snd.WebStreamPlayer;
 import starcom.snd.WebStreamPlayer.State;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;

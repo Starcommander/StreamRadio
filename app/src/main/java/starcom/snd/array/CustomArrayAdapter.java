@@ -16,7 +16,7 @@ import java.util.ArrayList;
 
 import starcom.snd.WebRadioChannel;
 import starcom.snd.listener.CallbackListener;
-import starcom.snd.SettingsDialog;
+import starcom.snd.dialog.SettingsDialog;
 import starcom.snd.R;
 
 public class CustomArrayAdapter extends ArrayAdapter<WebRadioChannel> implements CallbackListener
@@ -104,7 +104,6 @@ public class CustomArrayAdapter extends ArrayAdapter<WebRadioChannel> implements
         {
           SettingsDialog.showSettings(v, activity.getFragmentManager(), "fragment_settings", SettingsDialog.class, callback, SettingsDialog.SettingsType.CustomChannel);
         }
-        // TODO Auto-generated method stub
         return true;
       }
     }
