@@ -5,7 +5,6 @@ import java.io.FileInputStream;
 import java.io.BufferedReader;
 import java.io.FileOutputStream;
 import java.io.StringReader;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.IOException;
 import android.app.Activity;
@@ -58,8 +57,6 @@ public class ChannelList
   public ArrayList<WebRadioChannel> createSelectedChannelList()
   {
     ArrayList<WebRadioChannel> list = new ArrayList<WebRadioChannel>();
-
-LoggingSystem.info(ChannelList.class, "paul Get channels pre: size1=" + channels_custom.size() + " size2=" + channels_default.size());
     for (WebRadioChannel curChannel : channels_custom)
     {
       if (curChannel.isSelected()) { list.add(curChannel); }
@@ -119,11 +116,9 @@ LoggingSystem.info(ChannelList.class, "paul Get channels pre: size1=" + channels
     {
       LoggingSystem.severe(ChannelList.class, e, "Error while getting app version!!!!");
     }
-LoggingSystem.info(ChannelList.class, "paul Pre checkVersion: cur=" + curAppVersion);
-
     SharedPreferences pref = activity.getPreferences(Context.MODE_PRIVATE);
     String storedAppVersion = pref.getString("starcom.snd.versiondate", "");
-LoggingSystem.info(ChannelList.class, "paul Pre checkVersion: stored=" + storedAppVersion);
+    LoggingSystem.info(ChannelList.class, "Version-check: stored=" + storedAppVersion + " cur=" + curAppVersion);
     boolean isNewVersion = !storedAppVersion.equals(curAppVersion);
     ArrayList<WebRadioChannel> channels_raw;
     if (isNewVersion || channels_default.size()==0)
@@ -146,7 +141,6 @@ LoggingSystem.info(ChannelList.class, "paul Pre checkVersion: stored=" + storedA
   {
     for (WebRadioChannel curChannel : channels_raw)
     { // Set visible as stored, and ensure defaults are not in custom list.
-LoggingSystem.info(ChannelList.class, "paul Del double channel: " + curChannel.getName() + "=" + (channels_custom.contains(curChannel)));
       if (channels_custom.contains(curChannel))
       {
         int index = channels_custom.indexOf(curChannel);
@@ -164,7 +158,6 @@ LoggingSystem.info(ChannelList.class, "paul Del double channel: " + curChannel.g
     ArrayList<WebRadioChannel> channels_raw = getChannelsFromString(readDefaultChannels(activity));
     for (WebRadioChannel curChannel : channels_raw)
     { // Add missing default channels.
-LoggingSystem.info(ChannelList.class, "paul Adding channel: " + curChannel.getName() + "=" + (!channels_default.contains(curChannel)));
       if (!channels_default.contains(curChannel)) { channels_default.add(curChannel); }
     }
     return channels_raw;
@@ -213,7 +206,6 @@ LoggingSystem.info(ChannelList.class, "paul Adding channel: " + curChannel.getNa
    *  @param arrayAdapter The adapter, where to put channels **/
   private static ArrayList<WebRadioChannel> getChannelsFromString(String txt)
   {
-LoggingSystem.info(ChannelList.class, "paul Adding def-channels pre!");
     ArrayList<WebRadioChannel> arrayAdapter = new ArrayList<WebRadioChannel>();
     String lastName = null;
     try(BufferedReader br = new BufferedReader(new StringReader(txt)))
@@ -230,11 +222,9 @@ LoggingSystem.info(ChannelList.class, "paul Adding def-channels pre!");
         {
           if (hasNameCom) { lastName = s.substring(NAME_KEY_COM.length()); }
           else { lastName = s.substring(NAME_KEY.length()); }
-LoggingSystem.info(ChannelList.class, "paul Setting def-channel-NAME=" + lastName);
         }
         else if ((hasUri || hasUriCom) && lastName!=null)
         {
-LoggingSystem.info(ChannelList.class, "paul Adding def-channel: " + lastName);
           LoggingSystem.info(WebRadio.class, "Appending channel: ", lastName);
           String newUri = s.substring(URI_KEY.length());
           if (hasUriCom) { newUri = s.substring(URI_KEY_COM.length()); }
@@ -243,7 +233,10 @@ LoggingSystem.info(ChannelList.class, "paul Adding def-channel: " + lastName);
           arrayAdapter.add(curChannel);
           lastName = null;
         }
-else{LoggingSystem.info(ChannelList.class, "paul Unknown Line: " + s);}
+        else
+        {
+          LoggingSystem.info(ChannelList.class, "Unknown Line: " + s);
+        }
       }
     }
     catch (IOException e)

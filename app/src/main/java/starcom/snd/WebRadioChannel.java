@@ -64,6 +64,17 @@ public class WebRadioChannel implements Comparable<WebRadioChannel>
     }
     return 1;
   }
+
+  @Override
+  public boolean equals(Object other)
+  {
+    if (other instanceof WebRadioChannel)
+    {
+      WebRadioChannel otherW = (WebRadioChannel) other;
+      return compareTo(otherW)==0;
+    }
+    return false;
+  }
   
   public String toString() { return radioName + "\n" + radioUrl; }
 
