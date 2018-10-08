@@ -13,11 +13,13 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
+import android.graphics.Color;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
@@ -49,6 +51,8 @@ public class WebRadio extends Activity implements OnClickListener, StateListener
   {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
+    LinearLayout rl = (LinearLayout)findViewById(R.id.mainLayout);
+    rl.setBackgroundColor(Color.LTGRAY);
     ChannelList.init(this);
     
     playButton = (Button) findViewById(R.id.mainPlay);
