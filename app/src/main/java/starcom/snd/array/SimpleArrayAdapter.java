@@ -4,12 +4,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import starcom.snd.WebRadio;
 import starcom.snd.WebRadioChannel;
 import starcom.snd.R;
 
@@ -17,9 +21,11 @@ public class SimpleArrayAdapter extends BaseAdapter
 {
     private ArrayList<WebRadioChannel> channels = new ArrayList<WebRadioChannel>();
     private final Context context;
+    private SharedPreferences mPreferences;
 
     public SimpleArrayAdapter(Context context) {
         this.context = context;
+        mPreferences = PreferenceManager.getDefaultSharedPreferences(context);
     }
     
     @Override
@@ -38,6 +44,12 @@ public class SimpleArrayAdapter extends BaseAdapter
         ImageView imageView = (ImageView) rowView.findViewById(R.id.iconSimple);
         imageView.setImageResource(curChannel.getGenreIcon());
         channelTxt.setText(curChannel.getName());
+        if (mPreferences.getBoolean("is_dark", false))
+        {
+            channelTxt.setTextColor(context.getResources().getColor(R.color.colorTextNight));
+        }else {
+            channelTxt.setTextColor(context.getResources().getColor(R.color.colorTextDay));
+        }
         return rowView;
     }
 

@@ -86,14 +86,7 @@ public class SettingsDialog extends DialogFragmentWithListener implements OnClic
   @Override
   public void onClick(View v)
   {
-    if (v.getId()==R.id.editChannels)
-    {
-      LoggingSystem.info(SettingsDialog.class, "Setting selected: addChannel");
-      CallbackListener delegateCallback = setCallbackListener(null);
-      dismiss();
-      showSettings(v, getFragmentManager(), "fragment_channels", ChannelsDialog.class, delegateCallback, null);
-    }
-    else if (v.getId()==R.id.editChannel)
+    if (v.getId()==R.id.editChannel)
     {
       LoggingSystem.info(SettingsDialog.class, "Setting selected: editChannel");
       CallbackListener delegateCallback = setCallbackListener(null);
@@ -114,12 +107,6 @@ public class SettingsDialog extends DialogFragmentWithListener implements OnClic
       ChannelList.getInstance().setSelectedChannel(-1, false);
       showSettings(v, getFragmentManager(), "fragment_edit", SettingsDialog.class, delegateCallback, SettingsType.EditChannel);
     }
-    else if (v.getId()==R.id.about)
-    {
-      LoggingSystem.info(SettingsDialog.class, "starcom Not supported yet: About");
-      dismiss();
-      showSettings(v, getFragmentManager(), "fragment_text", TextDialog.class, null, null);
-    }
     else if (v.getId()==R.id.saveButton)
     {
       String newName = channelIcon.getSelectedItem().toString().substring(0, 4);
@@ -139,7 +126,7 @@ public class SettingsDialog extends DialogFragmentWithListener implements OnClic
   }
 
   /** Show this setting where buttons responses to var settingsType.
-    * @param selectedChanel The selected channel for this menu, or -1
+    * @param selectedChannel The selected channel for this menu, or -1
     * @param settingsTypeObj The Type for settings, null on other parent class. **/
   public static void showSettings(View v, FragmentManager fm, String dialogKey, Class<?> c, CallbackListener callback, SettingsType settingsTypeObj)
   { // close existing dialog fragments
@@ -157,10 +144,25 @@ public class SettingsDialog extends DialogFragmentWithListener implements OnClic
       editNameDialog.setCallbackListener(callback);
       //TODO: DialogFragmentWithCallback
     }
-    catch (java.lang.InstantiationException | IllegalAccessException e)
+    catch (java.lang.InstantiationException e)
+    {
+      LoggingSystem.severe(SettingsDialog.class, e, "Error creating class: "+c);
+    }
+    catch (IllegalAccessException e)
     {
       LoggingSystem.severe(SettingsDialog.class, e, "Error creating class: "+c);
     }
   }
 
+  @Override
+  public void onResume()
+  {
+    super.onResume();
+    if (settingsType == SettingsType.EditChannel) {
+      ViewGroup.LayoutParams params = getDialog().getWindow().getAttributes();
+      params.width = ViewGroup.LayoutParams.MATCH_PARENT;
+      params.height = ViewGroup.LayoutParams.MATCH_PARENT;
+      getDialog().getWindow().setAttributes((android.view.WindowManager.LayoutParams) params);
+    }
+  }
 }

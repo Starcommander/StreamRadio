@@ -1,0 +1,9 @@
+<b>WebRadio</b>
+
+This app plays network radio channels on Android.
+
+👉 category icons
+👉 Add your custom channels to list
+👉 dark or light theme selectable
+
+Some predefined channels are already selectable. The predefined List: <tt>app/src/main/res/raw/channel_list.properties</tt>

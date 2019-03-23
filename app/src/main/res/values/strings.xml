@@ -15,4 +15,5 @@
     <string name="edit_channel">Edit Channel</string>
     <string name="remove_channel">Remove Channel</string>
     <string name="add_channel">Add Channel</string>
+    <string name="dark">Dark Theme</string>
 </resources>

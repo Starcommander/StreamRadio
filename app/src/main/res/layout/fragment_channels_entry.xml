@@ -8,22 +8,22 @@
         android:id="@+id/checkbox"
         android:layout_width="wrap_content"
         android:layout_height="fill_parent"
-        android:gravity="center" />
+        android:gravity="start" />
 
     <ImageView
         android:id="@+id/icon"
         android:layout_width="wrap_content"
         android:layout_height="fill_parent"
-        android:gravity="center"
+        android:gravity="start"
         android:layout_marginRight="10dp"
-        android:src="@drawable/ic_launcher" />
+        android:src="@mipmap/logo" />
 
     <TextView
         android:id="@+id/channelTxt"
         android:layout_width="wrap_content"
         android:layout_height="fill_parent"
         android:textSize="24sp"
-        android:gravity="center"
+        android:gravity="start"
         android:text="" />
 
 </LinearLayout>
