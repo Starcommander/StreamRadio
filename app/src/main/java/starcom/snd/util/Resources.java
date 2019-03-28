@@ -16,10 +16,12 @@ public class Resources
   {
     StringBuilder sb = new StringBuilder();
     LoggingSystem.info(Resources.class, "Read raw file!");
-    try (InputStream is = context.getResources().openRawResource(rawID);
-         InputStreamReader isr = new InputStreamReader(is, "UTF-8");
-         BufferedReader br = new BufferedReader(isr))
+    InputStream is = null;
+    try
     {
+      is = context.getResources().openRawResource(rawID);
+      InputStreamReader isr = new InputStreamReader(is, "UTF-8");
+      BufferedReader br = new BufferedReader(isr);
       while (true)
       {
         String line = br.readLine();
@@ -31,6 +33,14 @@ public class Resources
     catch (IOException e)
     {
       LoggingSystem.severe(Resources.class, e, "Reading raw text");
+      return "";
+    }
+    finally
+    {
+      if (is != null)
+      {
+        try { is.close(); } catch (Exception e) {}
+      }
     }
     return sb.toString();
   }

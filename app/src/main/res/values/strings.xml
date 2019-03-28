@@ -16,4 +16,9 @@
     <string name="remove_channel">Remove Channel</string>
     <string name="add_channel">Add Channel</string>
     <string name="dark">Dark Theme</string>
+    <string name="error_write_channels">Error writing channels!</string>
+    <string name="busy">Player is busy</string>
+    <string name="loading" formatted="false">Loading: %s</string>
+    <string name="playing" formatted="false">\'%s\' playing</string>
+    <string name="bat_optimization">battery optimization</string>
 </resources>

@@ -169,22 +169,33 @@ public class ChannelList
   private static String readChannels(Activity activity, String channelFile)
   {
     StringBuilder sb = new StringBuilder();
-    try(FileInputStream is = activity.openFileInput(channelFile);
-        InputStreamReader sr = new InputStreamReader(is);
-        BufferedReader br = new BufferedReader(sr))
+
+
+    FileInputStream is = null;
+    try
     {
+      is = activity.openFileInput(channelFile);
+      InputStreamReader sr = new InputStreamReader(is);
+      BufferedReader br = new BufferedReader(sr);
       while (br.ready())
       {
         String s = br.readLine();
         sb.append(s).append("\n");
       }
-      return sb.toString();
     }
     catch (IOException e)
     {
       LoggingSystem.severe(ChannelList.class, e, "Reading channels");
       return "";
     }
+    finally
+    {
+      if (is != null)
+      {
+        try { is.close(); } catch (Exception e) {}
+      }
+    }
+    return sb.toString();
   }
 
   public void writeChannels(Activity activity, String channels_filename)
@@ -203,13 +214,16 @@ public class ChannelList
   
   /** Reads all channels and puts it into arrayAdapter.
    *  @param txt The channels text data.
-   *  @param arrayAdapter The adapter, where to put channels **/
+   **/
   private static ArrayList<WebRadioChannel> getChannelsFromString(String txt)
   {
     ArrayList<WebRadioChannel> arrayAdapter = new ArrayList<WebRadioChannel>();
     String lastName = null;
-    try(BufferedReader br = new BufferedReader(new StringReader(txt)))
+    StringReader sr = null;
+    try
     {
+      sr = new StringReader(txt);
+      BufferedReader br = new BufferedReader(sr);
       while (br.ready())
       {
         String s = br.readLine();
@@ -243,6 +257,13 @@ public class ChannelList
     {
       LoggingSystem.severe(ChannelList.class, e, "Get channels from String");
     }
+    finally
+    {
+      if (sr != null)
+      {
+        try { sr.close(); } catch (Exception e) {}
+      }
+    }
     return arrayAdapter;
   }
   
@@ -263,16 +284,24 @@ public class ChannelList
   private static void doWriteChannels(Activity activity, String toWrite, String channels_filename)
   {
     LoggingSystem.info(ChannelList.class, "Write custom channels");
-    try (FileOutputStream os = activity.openFileOutput(channels_filename,Context.MODE_PRIVATE))
+    FileOutputStream os = null;
+    try
     {
+      os = activity.openFileOutput(channels_filename,Context.MODE_PRIVATE);
       os.write(toWrite.getBytes());
       os.flush();
-      os.close();
     }
     catch (IOException e)
     {
       LoggingSystem.severe(ChannelList.class, e, "Writing channels");
-      Toast.makeText(activity.getApplicationContext(), "Error writing channels!", Toast.LENGTH_LONG).show();
+      Toast.makeText(activity.getApplicationContext(), R.string.error_write_channels, Toast.LENGTH_LONG).show();
+    }
+    finally
+    {
+      if (os != null)
+      {
+        try { os.close(); } catch (Exception e) {}
+      }
     }
   }
 

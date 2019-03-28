@@ -10,19 +10,18 @@ import starcom.snd.dialog.TextDialog;
 import starcom.snd.listener.CallStateListener;
 import starcom.snd.listener.CallbackListener;
 import starcom.snd.listener.StateListener;
-import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
+import android.net.Uri;
 import android.os.Build;
 import android.preference.PreferenceManager;
+import android.provider.Settings;
 import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.AppCompatDelegate;
@@ -33,7 +32,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.AdapterView;
@@ -162,7 +160,7 @@ public class WebRadio extends AppCompatActivity implements OnClickListener, Stat
       }
       catch (Exception e)
       {
-        Toast.makeText(getApplicationContext(), "Player is busy", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getApplicationContext(), R.string.busy, Toast.LENGTH_SHORT).show();
         LoggingSystem.warn(WebRadio.class, "Cant play because player is busy: "+e);
       }
     }
@@ -171,7 +169,7 @@ public class WebRadio extends AppCompatActivity implements OnClickListener, Stat
       boolean result = streamPlayer.stop();
       if (result==false)
       {
-        Toast.makeText(getApplicationContext(), "Player is busy", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getApplicationContext(), R.string.busy, Toast.LENGTH_SHORT).show();
       }
     }
   }
@@ -185,7 +183,7 @@ public class WebRadio extends AppCompatActivity implements OnClickListener, Stat
       bPlayButton = false;
       progressBar.setIndeterminate(false);
       progressBar.setVisibility(View.GONE);
-      label.setText(lastPlayChannel.getName());
+      label.setText(String.format(getString(R.string.playing), lastPlayChannel.getName()));
       showNotification();
     }
     else if (state == State.Stopped)
@@ -257,7 +255,11 @@ public class WebRadio extends AppCompatActivity implements OnClickListener, Stat
   {
     if (percent!=0 && percent<=progress) { return; }
     progress = percent;
-    Toast.makeText(getApplicationContext(), "Loading: " + percent + "%", Toast.LENGTH_SHORT).show();
+    Toast.makeText(
+            getApplicationContext(),
+            String.format(getString(R.string.loading), String.valueOf(percent)+"%"),
+            Toast.LENGTH_SHORT
+    ).show();
   }
 
   @Override
@@ -279,7 +281,8 @@ public class WebRadio extends AppCompatActivity implements OnClickListener, Stat
 
       case R.id.action_dark:
 
-        if (item.isChecked()) {
+        if (item.isChecked())
+        {
           item.setChecked(false);
           mPreferences.edit().putBoolean("is_dark", false).apply();
           getDelegate().setLocalNightMode(AppCompatDelegate.MODE_NIGHT_NO);
@@ -289,6 +292,15 @@ public class WebRadio extends AppCompatActivity implements OnClickListener, Stat
           mPreferences.edit().putBoolean("is_dark", true).apply();
           getDelegate().setLocalNightMode(AppCompatDelegate.MODE_NIGHT_YES);
           recreate();
+        }
+        return true;
+
+      case R.id.action_power:
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+          Intent intent = new Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
+          intent.setData(Uri.parse("package:" + getPackageName()));
+          startActivity(intent);
         }
         return true;
 
@@ -305,6 +317,10 @@ public class WebRadio extends AppCompatActivity implements OnClickListener, Stat
   @Override
   public boolean onPrepareOptionsMenu(Menu menu) {
     optionsmenu.findItem(R.id.action_dark).setChecked(mPreferences.getBoolean("is_dark", false));
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+    {
+      optionsmenu.findItem(R.id.action_power).setVisible(true);
+    }
     return super.onPrepareOptionsMenu(menu);
   }
 }

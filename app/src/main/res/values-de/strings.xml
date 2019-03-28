@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">WebRadio</string>
+    <string name="predefined_channels">Standard Channels</string>
+    <string name="custom_channels">Eigene Channels</string>
+    <string name="channels">Channels</string>
+    <string name="settings">Einstellungen</string>
+    <string name="about">Infos</string>
+    <string name="ok">OK</string>
+    <string name="play">Abspielen</string>
+    <string name="stop">Stoppen</string>
+    <string name="save">Speichern</string>
+    <string name="channel_name">Channel Bezeichnung</string>
+    <string name="edit_list">List anpassen</string>
+    <string name="edit_channel">Channel editieren</string>
+    <string name="remove_channel">Channel entfernen</string>
+    <string name="add_channel">Channel zufügen</string>
+    <string name="dark">Nachtmodus</string>
+    <string name="error_write_channels">Fehler beim Schreiben der Channels!</string>
+    <string name="busy">Player arbeitet</string>
+    <string name="loading" formatted="false">lade zu %s</string>
+    <string name="playing" formatted="false">\'%s\' läuft</string>
+    <string name="bat_optimization">Akku-Optimierung</string>
+</resources>
