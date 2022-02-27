@@ -15,6 +15,11 @@
             android:checked="false"
             android:title="@string/dark"
             app:showAsAction="never" />
+        <item
+            android:id="@+id/action_replay"
+            android:checked="false"
+            android:title="@string/replay"
+            app:showAsAction="never" />
     </group>
 
     <item

@@ -49,6 +49,8 @@ public class WebRadio extends AppCompatActivity implements OnClickListener, Stat
   private int NOTIFICATION = R.string.app_name;
   static WebRadioChannel lastPlayChannel;
   static WebRadioChannel lastSelectedChannel;
+  static boolean do_replay = false; // Replay on stream broken
+  static boolean skip_replay = false; // Stop by button or init.
   TextView label;
   Button playButton;
   boolean bPlayButton = false;
@@ -65,9 +67,11 @@ public class WebRadio extends AppCompatActivity implements OnClickListener, Stat
   public void onCreate(Bundle savedInstanceState)
   {
     super.onCreate(savedInstanceState);
+    skip_replay = true;
     mPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
     if (savedInstanceState == null)
     {
+      do_replay = mPreferences.getBoolean("is_replay", false);
       if (mPreferences.getBoolean("is_dark", false))
       {
         getDelegate().setLocalNightMode(AppCompatDelegate.MODE_NIGHT_YES);
@@ -157,6 +161,7 @@ public class WebRadio extends AppCompatActivity implements OnClickListener, Stat
         lastPlayChannel = curChannel;
         progressBar.setIndeterminate(true);
         progressBar.setVisibility(View.VISIBLE);
+        skip_replay = false; // Start by button
       }
       catch (Exception e)
       {
@@ -166,12 +171,24 @@ public class WebRadio extends AppCompatActivity implements OnClickListener, Stat
     }
     else
     {
+      skip_replay = true; // Stop by button
       boolean result = streamPlayer.stop();
       if (result==false)
       {
         Toast.makeText(getApplicationContext(), R.string.busy, Toast.LENGTH_SHORT).show();
       }
     }
+  }
+
+  private void doClickLater()
+  {
+    for (int i=0; i<20; i++)
+    {
+      try { Thread.sleep(500); }
+      catch (Exception e) { e.printStackTrace(); }
+      if (streamPlayer.getState() == WebStreamPlayer.State.Stopped) { break; }
+    }
+    this.runOnUiThread( new Runnable(){ public void run() {onClick(null);} } );
   }
 
   @Override
@@ -194,6 +211,14 @@ public class WebRadio extends AppCompatActivity implements OnClickListener, Stat
       progressBar.setVisibility(View.GONE);
       label.setText(""); // empty
       hideNotification();
+      if (skip_replay)
+      {
+        skip_replay = false;
+      }
+      else if (do_replay)
+      {
+        new Thread(){ public void run() {doClickLater();} }.start();
+      }
     }
     else if (state == State.Preparing) {
       progressBar.setIndeterminate(true);
@@ -295,6 +320,13 @@ public class WebRadio extends AppCompatActivity implements OnClickListener, Stat
         }
         return true;
 
+      case R.id.action_replay:
+
+        item.setChecked(!item.isChecked());
+        do_replay = item.isChecked();
+        mPreferences.edit().putBoolean("is_replay", do_replay).apply();
+        return true;
+
       case R.id.action_power:
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -317,6 +349,7 @@ public class WebRadio extends AppCompatActivity implements OnClickListener, Stat
   @Override
   public boolean onPrepareOptionsMenu(Menu menu) {
     optionsmenu.findItem(R.id.action_dark).setChecked(mPreferences.getBoolean("is_dark", false));
+    optionsmenu.findItem(R.id.action_replay).setChecked(mPreferences.getBoolean("is_replay", false));
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
     {
       optionsmenu.findItem(R.id.action_power).setVisible(true);

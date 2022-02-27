@@ -16,6 +16,7 @@
     <string name="remove_channel">Channel entfernen</string>
     <string name="add_channel">Channel zufügen</string>
     <string name="dark">Nachtmodus</string>
+    <string name="replay">Weiter bei Abbruch</string>
     <string name="error_write_channels">Fehler beim Schreiben der Channels!</string>
     <string name="busy">Player arbeitet</string>
     <string name="loading" formatted="false">lade zu %s</string>
