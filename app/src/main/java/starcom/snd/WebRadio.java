@@ -412,7 +412,7 @@ public class WebRadio extends AppCompatActivity implements OnClickListener, Stat
 
     public long getRemainingMin()
     {
-      return getRemainingMS / 60000;
+      return getRemainingMS() / 60000;
     }
 
     public long getRemainingMS()
