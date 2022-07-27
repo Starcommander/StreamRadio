@@ -27,6 +27,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.AppCompatDelegate;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
+import android.app.TimePickerDialog;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -306,7 +307,7 @@ public class WebRadio extends AppCompatActivity implements OnClickListener, Stat
   {
     switch (item.getItemId()) {
       case R.id.action_sleep:
-        showTimeSelector()
+        showTimeSelector();
       case R.id.action_setting:
 
         SettingsDialog.showSettings(null, getFragmentManager(), "fragment_channels", ChannelsDialog.class, this, null);
@@ -368,7 +369,7 @@ public class WebRadio extends AppCompatActivity implements OnClickListener, Stat
   public void showTimeSelector() {
     TimePickerDialog.OnTimeSetListener myTimeListener = new TimePickerDialog.OnTimeSetListener() {
       @Override
-      public void onTimeSet(TimePicker view, int hour, int minute) {
+      public void onTimeSet(android.widget.TimePicker view, int hour, int minute) {
         if (view.isShown()) {
           long minuteMult = 1000 * 60;
           long delayMS = (minute * minuteMult) + hour * 60 * minuteMult;
@@ -376,13 +377,13 @@ public class WebRadio extends AppCompatActivity implements OnClickListener, Stat
         }
       }
     };
-    TimePickerDialog timePickerDialog = new TimePickerDialog(getActivity(), android.R.style.Theme_Holo_Light_Dialog_NoActionBar, myTimeListener, 0, 10, true);
+    TimePickerDialog timePickerDialog = new TimePickerDialog(this, android.R.style.Theme_Holo_Light_Dialog_NoActionBar, myTimeListener, 0, 10, true);
     timePickerDialog.setTitle("Choose delay sleep time:");
     timePickerDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
     timePickerDialog.show();
   }
 
-  java.util.TimerTask createTimerTask()
+  static java.util.TimerTask createTimerTask()
   {
     return new java.util.TimerTask(){
       @Override public void run() { WebStreamPlayer.getInstance().stop(); }
