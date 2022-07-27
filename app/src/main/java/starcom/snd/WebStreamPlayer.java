@@ -18,6 +18,7 @@ public class WebStreamPlayer implements OnBufferingUpdateListener, OnCompletionL
   private static WebStreamPlayer instance;
   private MediaPlayer mediaPlayer;
   private State curState = State.Stopped;
+  boolean do_replay = false; // Replay on stream broken
   StateListener stateListener;
   
 //  public WebStreamPlayer()
@@ -79,6 +80,15 @@ public class WebStreamPlayer implements OnBufferingUpdateListener, OnCompletionL
     }
     return mediaPlayer;
   }
+
+  public void releaseMP()
+  {
+    if (mediaPlayer!=null)
+    {
+      mediaPlayer.release();
+      mediaPlayer = null;
+    }
+  }
   
   public void setStateListener(StateListener stateListener)
   {
@@ -136,12 +146,15 @@ public class WebStreamPlayer implements OnBufferingUpdateListener, OnCompletionL
   @Override
   public boolean onInfo(MediaPlayer mp, int what, int extra)
   {
+    if (do_replay && what==701) { stop(); } // MEDIA_INFO_BUFFERING_START
+    System.out.println("WebRadio: Info: " + what + "/" + extra);
     return false;
   }
 
   @Override
   public boolean onError(MediaPlayer mp, int what, int extra)
   {
+    System.out.println("WebRadio: Error: " + what + "/" + extra);
     if (curState==State.Playing)
     {
       stop();
@@ -160,6 +173,7 @@ public class WebStreamPlayer implements OnBufferingUpdateListener, OnCompletionL
     }
     else
     {
+      stop();
       throw new IllegalStateException("Unknown State: "+curState);
     }
     return false;

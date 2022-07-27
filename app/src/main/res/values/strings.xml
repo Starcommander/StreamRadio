@@ -22,4 +22,5 @@
     <string name="loading" formatted="false">Loading: %s</string>
     <string name="playing" formatted="false">\'%s\' playing</string>
     <string name="bat_optimization">battery optimization</string>
+    <string name="sleep_timer">Sleep timer</string>
 </resources>

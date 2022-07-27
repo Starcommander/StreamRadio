@@ -30,6 +30,13 @@
         app:showAsAction="never" />
 
     <item
+        android:id="@+id/action_sleep"
+        android:orderInCategory="100"
+        android:visible="false"
+        android:title="@string/sleep_timer"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/action_about"
         android:orderInCategory="100"
         android:title="@string/about"

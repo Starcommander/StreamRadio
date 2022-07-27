@@ -22,4 +22,5 @@
     <string name="loading" formatted="false">lade zu %s</string>
     <string name="playing" formatted="false">\'%s\' läuft</string>
     <string name="bat_optimization">Akku-Optimierung</string>
+    <string name="sleep_timer">Sleep timer</string>
 </resources>
