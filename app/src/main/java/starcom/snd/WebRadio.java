@@ -43,6 +43,8 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.TimerTask;
+import java.util.Timer;
 
 public class WebRadio extends AppCompatActivity implements OnClickListener, StateListener, CallbackListener
 {
@@ -51,6 +53,8 @@ public class WebRadio extends AppCompatActivity implements OnClickListener, Stat
   static WebRadioChannel lastPlayChannel;
   static WebRadioChannel lastSelectedChannel;
   static boolean skip_replay = false; // Stop by button or init.
+  static Timer timer = new Timer();
+  static MyTimerTask timerTask;
   TextView label;
   Button playButton;
   boolean bPlayButton = false;
@@ -308,6 +312,7 @@ public class WebRadio extends AppCompatActivity implements OnClickListener, Stat
     switch (item.getItemId()) {
       case R.id.action_sleep:
         showTimeSelector();
+        return true;
       case R.id.action_setting:
 
         SettingsDialog.showSettings(null, getFragmentManager(), "fragment_channels", ChannelsDialog.class, this, null);
@@ -373,21 +378,51 @@ public class WebRadio extends AppCompatActivity implements OnClickListener, Stat
         if (view.isShown()) {
           long minuteMult = 1000 * 60;
           long delayMS = (minute * minuteMult) + hour * 60 * minuteMult;
-          new java.util.Timer().schedule (createTimerTask(), delayMS);
+          timer.purge(); // Cleans up canceled tasks.
+          if (timerTask!=null) { timerTask.cancel(); }
+          timerTask = new MyTimerTask(delayMS);
+          timer.schedule (timerTask, delayMS);
         }
       }
     };
     TimePickerDialog timePickerDialog = new TimePickerDialog(this, android.R.style.Theme_Holo_Light_Dialog_NoActionBar, myTimeListener, 0, 10, true);
     timePickerDialog.setTitle("Choose delay sleep time:");
     timePickerDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+    if (timerTask==null || timerTask.getRemainingMS() < 0)
+    {
+      Toast.makeText(getApplicationContext(), "SleepTimer: off", Toast.LENGTH_SHORT).show();
+    }
+    else
+    {
+      Toast.makeText(getApplicationContext(), "SleepTimer: " + timerTask.getRemainingMin() + "min", Toast.LENGTH_SHORT).show();
+    }
     timePickerDialog.show();
   }
 
-  static java.util.TimerTask createTimerTask()
+  static class MyTimerTask extends TimerTask
   {
-    return new java.util.TimerTask(){
-      @Override public void run() { WebStreamPlayer.getInstance().stop(); }
-    };
+    long delay;
+    long initTime;
+
+    public MyTimerTask(long delay)
+    {
+      this.delay = delay;
+      initTime = System.currentTimeMillis();
+    }
+
+    public long getRemainingMin()
+    {
+      return getRemainingMS / 60000;
+    }
+
+    public long getRemainingMS()
+    {
+      long now = System.currentTimeMillis();
+      long diff = now - initTime;
+      return delay - diff;
+    }
+
+    @Override public void run() { WebStreamPlayer.getInstance().stop(); }
   }
 
 }
